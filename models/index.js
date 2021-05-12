@@ -8,4 +8,3 @@ const teams = teamsModel(connection, Sequelize)
 
 module.exports = { teams }
 
-//

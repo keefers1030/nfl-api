@@ -1,13 +1,34 @@
-const teams = require('../teams')
+/* eslint-disable no-console */
+// const teams = require('../teams')
+const models = require('../models')
 
-const getTeams = (request, response) => {
-  return response.send(teams)
+const getAllTeams = async (req, res) => {
+  const teams = await models.teams.findAll()
+
+  return res.send(teams)
+}
+const getTeamById = async (req, res) => {
+  // const teamID = teams.find((team) => team.id === parseInt(req.params.id))
+  const { id } = req.params
+  const teams = await models.teams.findOne({ where: { id } })
+
+  return teams ? res.send(teams) : res.sendStatus(404)
 }
 
-const getTeamId = (request, response) => {
-  const { id } = request.params
-  const foundTeamId = teams.filter((team) => team.id == id)
-  return response.send(foundTeamId)
+const addNewTeam = async (req, res) => {
+  const {
+    location, mascot, abbreviation, conference, division
+  } = req.body
+
+  if (!location || !mascot || !abbreviation || !conference || !division) {
+    res.status(400).send('Must contain all inputs')
+  }
+
+  const newTeam = { location, mascot, abbreviation, conference, division }
+
+  const team = await models.teams.create(newTeam)
+
+  return res.status(201).send(team)
 }
 
-module.exports = { getTeams, getTeamId }
+module.exports = { getAllTeams, getTeamById, addNewTeam }
